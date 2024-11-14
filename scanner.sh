@@ -18,9 +18,6 @@ check_server() {
             echo "Serveur Minecraft Bedrock trouvé sur l'IP $ip, port UDP $port"
             echo "$ip:$port (MCPE)" >> "$output_file"
         fi
-    else
-        #TCP
-        #TODO: Check for Java servers
     fi
 }
 
@@ -30,11 +27,6 @@ for ip in $(eval echo $IP_RANGE); do
             echo "Vérification de l'IP $ip, port UDP $port"
             check_server "$ip" "$port" "mcpe"
         done
-    else
-        #for port in $(seq ${PORT_JAVA_RANGE/-/ }); do
-        #    echo "Vérification de l'IP $ip, port TCP $port"
-        #    check_server "$ip" "$port" "java"
-        #done
     fi
 done
 
