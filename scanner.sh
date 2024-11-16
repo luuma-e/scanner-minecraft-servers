@@ -19,8 +19,8 @@ generate_ips() {
 
 IP_START="100.10.1.0"
 IP_END="255.255.255.255"
-PORT_MCPE_START=19128
-PORT_MCPE_END=19142
+PORT_MCPE_START=19132
+PORT_MCPE_END=19132
 output_file="servers_found.txt"
 
 > "$output_file"
@@ -28,6 +28,8 @@ output_file="servers_found.txt"
 check_server() {
     local ip=$1
     local port=$2
+
+    echo "Vérification de $ip:$port"
 
     result=$(python3 query_bedrock.py "$ip" "$port")
     if echo "$result" | grep -q "MCPE"; then
@@ -40,7 +42,6 @@ export -f check_server
 export output_file
 
 # Générer les IPs et effectuer les vérifications
-generate_ips "$IP_START" "$IP_END" | xargs -P 1000 -I {} bash -c \
-'for port in $(seq '"$PORT_MCPE_START"' '"$PORT_MCPE_END"'); do check_server {} $port; done'
+generate_ips "$IP_START" "$IP_END" | parallel -j 10000 'for port in $(seq '"$PORT_MCPE_START"' '"$PORT_MCPE_END"'); do check_server {} $port; done'
 
 trap "echo 'Interrompu'; exit" SIGINT SIGTERM
